@@ -1,0 +1,1 @@
+docker run -v .:/src -w /src --network host --rm -it node:22 /bin/bash

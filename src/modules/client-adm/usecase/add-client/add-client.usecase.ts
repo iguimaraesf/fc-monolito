@@ -6,10 +6,7 @@ import { AddClientInputDto, AddClientOutputDto } from "./add-client.usecase.dto"
 
 export default class AddClientUseCase {
 
-  private _clientRepository: ClientGateway
-
-  constructor(clientRepository: ClientGateway) {
-    this._clientRepository = clientRepository
+  constructor(private _clientRepository: ClientGateway) {
   }
 
   async execute(input: AddClientInputDto): Promise<AddClientOutputDto> {

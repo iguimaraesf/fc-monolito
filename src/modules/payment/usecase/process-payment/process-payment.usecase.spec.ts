@@ -9,7 +9,7 @@ const transaction = new Transaction({
   status: "approved",
 });
 
-const MockRepository = () => {
+const MockRepositoryApproved = () => {
   return {
     save: jest.fn().mockReturnValue(Promise.resolve(transaction)),
   };
@@ -30,7 +30,7 @@ const MockRepositoryDeclined = () => {
 
 describe("Process payment usecase unit test", () => {
   it("should approve a transaction", async () => {
-    const paymentRepository = MockRepository();
+    const paymentRepository = MockRepositoryApproved();
     const usecase = new ProcessPaymentUseCase(paymentRepository);
     const input = {
       orderId: "1",

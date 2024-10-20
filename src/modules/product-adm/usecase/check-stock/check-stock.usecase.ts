@@ -2,10 +2,8 @@ import ProductGateway from "../../gateway/product.gateway";
 import { CheckStockInputDto, CheckStockOutputDto } from "./check-stock.dto";
 
 export default class CheckStockUseCase {
-  private _productRepository: ProductGateway;
 
-  constructor(productRepository: ProductGateway) {
-    this._productRepository = productRepository;
+  constructor(private _productRepository: ProductGateway) {
   }
 
   async execute(input: CheckStockInputDto): Promise<CheckStockOutputDto> {

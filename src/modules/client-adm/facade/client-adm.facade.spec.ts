@@ -29,12 +29,13 @@ describe("Client Adm Facade test", () => {
 
   it("should create a client", async () => {
 
-    const repository = new ClientRepository()
-    const addUsecase = new AddClientUseCase(repository)
-    const facade = new ClientAdmFacade({
-      addUsecase: addUsecase,
-      findUsecase: undefined,
-    })
+    // const repository = new ClientRepository()
+    // const addUsecase = new AddClientUseCase(repository)
+    // const facade = new ClientAdmFacade({
+    //   addUsecase: addUsecase,
+    //   findUsecase: undefined,
+    // })
+    const facade = ClientAdmFacadeFactory.create()
 
     const input = {
       id: "1",
