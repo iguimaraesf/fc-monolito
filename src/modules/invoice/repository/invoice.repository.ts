@@ -7,7 +7,7 @@ import Address from "../../@shared/domain/value-object/address"
 export default class InvoiceRepository implements InvoiceGateway {
     async generate(invoice: Invoice): Promise<void> {
         const newInvoice = await InvoiceModel.create({
-            id: invoice.id,
+            id: invoice.id.id,
             name: invoice.name,
             document: invoice.document,
             street: invoice.address.street,
@@ -19,7 +19,7 @@ export default class InvoiceRepository implements InvoiceGateway {
         })
         const createItemPromises = invoice.items.map(element => {
             return InvoiceItemModel.create({
-                id: element.id,
+                id: element.id.id,
                 name: element.name,
                 price: element.price,
                 invoiceId: newInvoice.id,
