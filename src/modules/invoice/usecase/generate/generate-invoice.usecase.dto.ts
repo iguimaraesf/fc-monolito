@@ -18,6 +18,7 @@ export interface GenerateInvoiceUseCaseInputDto {
     id: string
     name: string
     document: string
+    // por algum motivo... não tem o agrupamento address
     street: string
     number: string
     complement: string

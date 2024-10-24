@@ -72,5 +72,75 @@ describe("InvoiceRepositoryTest", () => {
             where: { invoiceId: invoice.id.id }
         })
         expect(itemsDb.length).toBe(2)
+        compararDb(itemsDb[0], i1)
+        compararDb(itemsDb[1], i2)
+    })
+
+    it("should find an invoice", async () => {
+        const invDb = await InvoiceModel.create({
+            id: "1",
+            name: "Testando",
+            document: "12345-9",
+            street: "Rua das Festas",
+            number: "101",
+            complement: "ap. 1050",
+            city: "Rio de Janeiro",
+            state: "RJ",
+            zipCode: "11111222",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        })
+        const i1Db = await InvoiceItemModel.create({
+            id: "aa1",
+            name: "Vodka",
+            price: 85.69,
+            invoiceId: invDb.id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        })
+        const i2Db = await InvoiceItemModel.create({
+            id: "aa2",
+            name: "Energético",
+            price: 12.55,
+            invoiceId: invDb.id,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        })
+
+        const repository = new InvoiceRepository()
+        const res = await repository.find(invDb.id)
+
+        //console.log(invDb)
+        expect(res.id.id).toBe(invDb.id)
+        expect(res.name).toBe(invDb.name)
+        expect(res.document).toBe(invDb.document)
+        expect(res.createdAt).toBeDefined()
+        expect(res.updatedAt).toBeDefined()
+        const addr = res.address
+        expect(addr.street).toBe(invDb.street)
+        expect(addr.number).toBe(invDb.number)
+        expect(addr.complement).toBe(invDb.complement)
+        expect(addr.city).toBe(invDb.city)
+        expect(addr.state).toBe(invDb.state)
+        expect(addr.zipCode).toBe(invDb.zipCode)
+
+        expect(res.items.length).toBe(2)
+        compararBean(res.items[0], i1Db)
+        compararBean(res.items[1], i2Db)
     })
 })
+
+function compararDb(db: InvoiceItemModel, item: InvoiceItems) {
+    expect(db.id).toBe(item.id.id)
+    expect(db.name).toBe(item.name)
+    expect(db.price).toBe(item.price)
+    expect(db.invoiceId).toBeDefined()
+}
+
+function compararBean(item: InvoiceItems, db: InvoiceItemModel) {
+    expect(item.id.id).toBe(db.id)
+    expect(item.name).toBe(db.name)
+    expect(item.price).toBe(db.price)
+    expect(item.createdAt).toBeDefined()
+    expect(item.updatedAt).toBeDefined()
+}

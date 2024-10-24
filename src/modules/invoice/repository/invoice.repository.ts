@@ -5,7 +5,7 @@ import { InvoiceItemModel, InvoiceModel } from "./invoice.model";
 import Address from "../../@shared/domain/value-object/address"
 
 export default class InvoiceRepository implements InvoiceGateway {
-    async generate(invoice: Invoice): Promise<void> {
+    async generate(invoice: Invoice): Promise<Invoice> {
         const newInvoice = await InvoiceModel.create({
             id: invoice.id.id,
             name: invoice.name,
@@ -25,8 +25,18 @@ export default class InvoiceRepository implements InvoiceGateway {
                 invoiceId: newInvoice.id,
             })
         })
-        await Promise.all(createItemPromises)
+        const items = await Promise.all(createItemPromises)
+        return new Invoice({
+            id: new Id(newInvoice.id),
+            name: invoice.name,
+            document: invoice.document,
+            createdAt: invoice.createdAt,
+            updatedAt: invoice.updatedAt,
+            address: this.invoicesAddress(newInvoice),
+            items: this.convertItems(items)
+        })
     }
+
     async find(id: string): Promise<Invoice> {
         const invoice = await InvoiceModel.findOne({
             where: { id: id },
@@ -53,10 +63,14 @@ export default class InvoiceRepository implements InvoiceGateway {
             invoice.zipCode)
     }
     async findItems(id: string): Promise<InvoiceItems[]> {
-        const items: InvoiceItems[] = []
         const elements = await InvoiceItemModel.findAll({
             where: { invoiceId: id }
         })
+        return this.convertItems(elements);
+    }
+
+    private convertItems(elements: InvoiceItemModel[]) {
+        const items: InvoiceItems[] = [];
         elements.forEach(e => {
             const invoiceItem = new InvoiceItems({
                 id: new Id(e.id),
@@ -64,9 +78,9 @@ export default class InvoiceRepository implements InvoiceGateway {
                 price: e.price,
                 createdAt: e.createdAt,
                 updatedAt: e.updatedAt,
-            })
-            items.push(invoiceItem)
-        })
-        return items
+            });
+            items.push(invoiceItem);
+        });
+        return items;
     }
 }
